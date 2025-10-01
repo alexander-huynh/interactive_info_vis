@@ -28,10 +28,10 @@ function draw() {
   //sun
   fill("yellow");
   
-  rect(width/4, shapeHeight, width/6);
+  rect(width/2.5, shapeHeight, width/6);
   textSize(20);
   fill("white");
-  text('Hi! My name is Alexander.', currentWidth/2, shapeHeight/2);
+  text('Hi! My name is Alexander. I am a UW student.', currentWidth/2, shapeHeight/2);
   
 
 
