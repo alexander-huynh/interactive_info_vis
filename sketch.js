@@ -5,8 +5,8 @@ let designWidth = 400;
 let designHeight= 400;
 let horizon ;
 function setup() {
-  createCanvas(designWidth,designHeight);
-  horizon =height/2;
+  createCanvas(windowWidth,windowHeight);
+  horizon =height/1.5;
 }
 
 function draw() {
@@ -19,19 +19,19 @@ function draw() {
 
   //with if-else statement
   if (shapeHeight < horizon) {
-    background("lightblue"); // blue if above horizon
+    background("orange"); // blue if above horizon
     
   } else {
-    background("grey"); // grey if below horizon
+    background("black"); // grey if below horizon
   }
 
   //sun
-  fill("white");
+  fill("yellow");
   
-  rect(width/4, shapeHeight, width/2);
+  rect(width/4, shapeHeight, width/6);
   textSize(20);
-  fill("black");
-  text('Hi! My name is...', currentWidth/2, shapeHeight/2);
+  fill("white");
+  text('Hi! My name is Alexander.', currentWidth/2, shapeHeight/2);
   
 
 
@@ -41,7 +41,7 @@ function draw() {
 
   //grass
 
-  fill("lavender");
+  fill("lightgreen");
 
   rect(0, horizon, width, height);
 
