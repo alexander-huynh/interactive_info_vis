@@ -9,12 +9,15 @@ registerSketch('sk2', function (p) {
   };
   p.draw = function () {
     p.background(18);
+    const idx = p.minute() % 25;  // active cell index 0..24
+    let k = 0;                    // running cell index
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
         const x = PAD + c * (SIZE + GAP);
         const y = PAD + r * (SIZE + GAP);
-        p.fill(90);
+        if (k === idx) { p.fill(255); } else { p.fill(90); }
         p.rect(x, y, SIZE, SIZE, 10);
+        k++;
       }
     }
   };
