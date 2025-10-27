@@ -36,6 +36,19 @@ registerSketch('sk2', function (p) {
           p.rect(x + INSET, y + INSET, (SIZE - INSET * 2) * f, SIZE - INSET * 2, 6);
         }
 
+        if (k === idx) {
+          // outline to make the active sticky pop
+          p.noFill(); p.stroke(255); p.strokeWeight(2);
+          p.rect(x, y, SIZE, SIZE, 10);
+          p.noStroke();
+
+          // tiny label above active sticky
+          p.fill(220);
+          p.textAlign(p.CENTER, p.BOTTOM);
+          p.textSize(12);
+          p.text(`${idx + 1}/25`, x + SIZE / 2, y - 4);
+        }
+        
         k++;
       }
     }
