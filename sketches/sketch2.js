@@ -10,6 +10,8 @@ registerSketch('sk2', function (p) {
   p.draw = function () {
     p.background(18);
     const idx = p.minute() % 25;  // active cell index 0..24
+    const f = p.second() / 60;   // 0..1 progress within the minute
+    const INSET = 6;             // inner padding for the fill bar
     let k = 0;                    // running cell index
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
@@ -17,6 +19,17 @@ registerSketch('sk2', function (p) {
         const y = PAD + r * (SIZE + GAP);
         if (k === idx) { p.fill(255); } else { p.fill(90); }
         p.rect(x, y, SIZE, SIZE, 10);
+
+        if (k === idx) {
+          p.noStroke();
+          // inner background
+          p.fill(18);
+          p.rect(x + INSET, y + INSET, SIZE - INSET * 2, SIZE - INSET * 2, 6);
+          // per-second fill
+          p.fill(240);
+          p.rect(x + INSET, y + INSET, (SIZE - INSET * 2) * f, SIZE - INSET * 2, 6);
+        }
+
         k++;
       }
     }
