@@ -17,7 +17,13 @@ registerSketch('sk2', function (p) {
       for (let c = 0; c < N; c++) {
         const x = PAD + c * (SIZE + GAP);
         const y = PAD + r * (SIZE + GAP);
-        if (k === idx) { p.fill(255); } else { p.fill(90); }
+        if (k < idx) {
+          p.fill(200);      // completed minutes (lighter)
+        } else if (k === idx) {
+          p.fill(255);      // active minute (bright)
+        } else {
+          p.fill(70);       // future minutes (darker)
+        }
         p.rect(x, y, SIZE, SIZE, 10);
 
         if (k === idx) {
