@@ -1,7 +1,57 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
+
 canvas {
+  display: block;
+}
+
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  /* margin: 12px 0; */
+  padding: 12px;
+  background: rgba(245, 247, 250, 0.9);
+  border-radius: 12px;
+  align-items: center;
+}
+
+.tab-btn {
+  padding: 8px 14px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-weight: 500;
+}
+
+.tab-btn:hover {
+  background: rgba(51, 65, 85, 0.06);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: #ddd;
+  font-weight: 600;
+}
+
+.tab-content {
+  display: none;
+  border: 1px solid #ccc;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.sketch-container canvas {
+  max-width: 100%;
+  height: auto;
   display: block;
 }
