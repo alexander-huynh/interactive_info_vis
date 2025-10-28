@@ -13,10 +13,12 @@ registerSketch('sk4', function (p) {
   p.draw = function () {
   p.background(12);
 
-    // clothesline
-    p.stroke(180);
-    p.strokeWeight(2);
+    // tree branch
+    p.noFill();
+    p.stroke(95, 65, 40);     // brown
+    p.strokeWeight(14);       // thick branch
     p.line(LEFT, LINE_Y, RIGHT, LINE_Y);
+
 
     const m = p.minute() % N; // fallen tokens count
     for (let i = 0; i < N; i++) {
@@ -52,8 +54,10 @@ registerSketch('sk4', function (p) {
       }
 
       // string
-      p.stroke(140);
-      p.line(xDraw, LINE_Y, xDraw, TOKEN_Y - 18);
+      p.stroke(95, 65, 40);
+      p.strokeWeight(3);
+      p.line(xDraw, LINE_Y, xDraw, TOKEN_Y - R - 6);
+
 
 
       // token → apple
