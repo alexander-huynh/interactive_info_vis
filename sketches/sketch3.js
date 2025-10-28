@@ -17,6 +17,13 @@ registerSketch('sk3', function (p) {
     const t = ((p.minute() % 25) + p.second() / 60) / 25; // 0..1
     const x = p.lerp(MARGIN, p.width - MARGIN, t);
 
+    p.push();
+    p.noStroke();
+    const pulse = 0.5 + 0.5 * p.sin((p.millis() / 1000) * p.TWO_PI); // 0..1
+    p.fill(255, 200, 0, 80); // semi-transparent glow
+    p.circle(x, SUN_Y, 40 + 18 * pulse);
+    p.pop();
+
     // sun
     p.noStroke();
     p.fill(255, 200, 0);
