@@ -32,12 +32,22 @@ registerSketch('sk4', function (p) {
 
       }
       if (i < m) {
-        // fallen token at ground
-
-
+        // fallen token at ground (draw apple)
         p.noStroke();
-        p.fill(180, 150, 60);
-        p.circle(x, GROUND_Y, R * 2);
+        // apple body
+        p.fill(220, 40, 40);
+        p.push();
+        p.translate(x, GROUND_Y);
+        p.circle(0, 0, R * 2);
+        // stem
+        p.stroke(90, 60, 30);
+        p.strokeWeight(2);
+        p.line(0, -R, 0, -R - 8);
+        // leaf
+        p.noStroke();
+        p.fill(40, 160, 60);
+        p.ellipse(5, -R - 6, 10, 6, 0);
+        p.pop();
         continue;
       }
 
@@ -46,10 +56,22 @@ registerSketch('sk4', function (p) {
       p.line(xDraw, LINE_Y, xDraw, TOKEN_Y - 18);
 
 
-      // token
+      // token → apple
       p.noStroke();
-      p.fill(255, 200, 0);
-      p.circle(xDraw, TOKEN_Y, R * 2);
+      // apple body
+      p.fill(220, 40, 40);
+      p.push();
+      p.translate(xDraw, TOKEN_Y);
+      p.circle(0, 0, R * 2);
+      // stem
+      p.stroke(90, 60, 30);
+      p.strokeWeight(2);
+      p.line(0, -R, 0, -R - 8);
+      // leaf
+      p.noStroke();
+      p.fill(40, 160, 60);
+      p.ellipse(5, -R - 6, 10, 6, 0);
+      p.pop();
 
     }
   };
