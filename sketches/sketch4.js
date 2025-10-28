@@ -21,8 +21,20 @@ registerSketch('sk4', function (p) {
     const m = p.minute() % N; // fallen tokens count
     for (let i = 0; i < N; i++) {
       const x = p.map(i, 0, N - 1, LEFT, RIGHT);
+      let xDraw = x;
+      if (i === m) {
+        const swing = p.sin(p.millis() / 700) * 6; // subtle sway
+        xDraw += swing;
+        p.fill(220);
+        p.textSize(12);
+        p.textAlign(p.CENTER, p.BOTTOM);
+        p.text(`${m + 1}/${N}`, xDraw, TOKEN_Y - 24); // identify progress
+
+      }
       if (i < m) {
         // fallen token at ground
+
+
         p.noStroke();
         p.fill(180, 150, 60);
         p.circle(x, GROUND_Y, R * 2);
@@ -31,12 +43,14 @@ registerSketch('sk4', function (p) {
 
       // string
       p.stroke(140);
-      p.line(x, LINE_Y, x, TOKEN_Y - 18);
+      p.line(xDraw, LINE_Y, xDraw, TOKEN_Y - 18);
+
 
       // token
       p.noStroke();
       p.fill(255, 200, 0);
-      p.circle(x, TOKEN_Y, R * 2);
+      p.circle(xDraw, TOKEN_Y, R * 2);
+
     }
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
