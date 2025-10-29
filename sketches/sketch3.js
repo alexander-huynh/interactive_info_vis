@@ -20,6 +20,12 @@ registerSketch('sk3', function (p) {
     p.stroke(120);
     p.line(0, HORIZON_Y, p.width, HORIZON_Y);
 
+    const groundStart = p.color(40, 70, 50);
+const groundEnd = p.color(200, 190, 140);
+p.noStroke();
+p.fill(p.lerpColor(groundStart, groundEnd, t));
+p.rect(0, HORIZON_Y, p.width, p.height - HORIZON_Y);
+
     // 25-minute smooth progress left -> right
     const x = p.lerp(MARGIN, p.width - MARGIN, t);
 

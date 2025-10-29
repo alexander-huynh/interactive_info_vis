@@ -13,6 +13,12 @@ registerSketch('sk2', function (p) {
     const f = p.second() / 60;   // 0..1 progress within the minute
     const INSET = 6;             // inner padding for the fill bar
     let k = 0;                    // running cell index
+
+// Post-it palette
+const NOTE_BASE   = [255, 229, 94];   // active
+const NOTE_DONE   = [255, 242, 160];  // completed (lighter)
+const NOTE_FUTURE = [210, 190, 80];   // future (dimmer)
+
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
         const x = PAD + c * (SIZE + GAP);
@@ -25,6 +31,15 @@ registerSketch('sk2', function (p) {
           p.fill(70);       // future minutes (darker)
         }
         p.rect(x, y, SIZE, SIZE, 10);
+
+        if (k < idx) {
+  p.fill(...NOTE_DONE);       // completed minutes
+} else if (k === idx) {
+  p.fill(...NOTE_BASE);       // active minute
+} else {
+  p.fill(...NOTE_FUTURE);     // future minutes
+}
+p.rect(x, y, SIZE, SIZE, 10);
 
         if (k === idx) {
           p.noStroke();
