@@ -7,14 +7,20 @@ registerSketch('sk3', function (p) {
     p.createCanvas(p.windowWidth, p.windowHeight);
   };
   p.draw = function () {
-    p.background(10);
+  // 25-minute progress 0..1
+  const t = ((p.minute() % 25) + p.second() / 60) / 25;
+
+  // sky: twilight → daylight
+  const skyStart = p.color(20, 28, 48);
+  const skyEnd   = p.color(180, 210, 255);
+  p.background(p.lerpColor(skyStart, skyEnd, t));
+
 
     // horizon
     p.stroke(120);
     p.line(0, HORIZON_Y, p.width, HORIZON_Y);
 
     // 25-minute smooth progress left -> right
-    const t = ((p.minute() % 25) + p.second() / 60) / 25; // 0..1
     const x = p.lerp(MARGIN, p.width - MARGIN, t);
 
     p.push();

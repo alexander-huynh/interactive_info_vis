@@ -11,7 +11,7 @@ registerSketch('sk4', function (p) {
     p.createCanvas(p.windowWidth, p.windowHeight);
   };
   p.draw = function () {
-  p.background(12);
+    p.background(20, 28, 48);
 
     // tree branch
     p.noFill();
