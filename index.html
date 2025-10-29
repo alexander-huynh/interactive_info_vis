@@ -55,14 +55,7 @@
         <div class="sketch-narrative" aria-labelledby="sk2-narrative-title">
           <h3 id="sk2-narrative-title">Sketch narrative — Sticky Notes Grid (Pomodoro)</h3>
 
-          <p>This clock represents a 25-minute Pomodoro as a 5×5 grid of sticky notes. Each note maps to one minute, so
-            the structure is learnable at a glance. I wanted a display that feels like progress, not pressure, so I
-            replaced a numeric countdown with a “writing” metaphor: seconds draw left-to-right lines inside the active
-            note. Feedback shaped the iteration—classmates said the white fill bar looked like a loading indicator, so I
-            switched to handwriting-style strokes. The active note was also hard to find in early versions; I added a
-            strong outline and a small “(m+1)/25” label to make the state explicit. Finished notes are brighter and
-            future notes are dimmer, which keeps motion localized and focus friendly. The result is calm, familiar, and
-            readable in a small browser panel beside study materials.</p>
+          <p>This clock shows 25 minutes as a 5×5 grid of sticky notes—each note is one minute. I wanted something that feels like progress without staring at a countdown clock. When a minute is active, seconds are drawn as little handwriting strokes inside the note. Early versions used a solid white fill bar, but classmates said it looked like a loading bar, so I switched to “pen” strokes so it feels like someone writing on the note. I also had a problem where it was hard to find the current minute, so I added a clearer outline and a tiny label like “(m+1)/25.” Finished notes get brighter so the user can see what’s done, and future notes stay faint. It’s meant to be something you can keep at the side of the screen while working without it demanding attention.</p>
 
           <ul>
             <li><strong>Context:</strong> Browser-based studying; ambient awareness without numeric pressure.</li>
@@ -71,13 +64,18 @@
                 <li>5×5 grid maps perfectly to 25 minutes—no legend.</li>
                 <li>Yellow Post-it palette; future (dim) vs done (brighter).</li>
                 <li>Active note gets a bold outline + small “(m+1)/25” label.</li>
-                <li>Seconds draw left→right “writing” lines, not a loading bar.</li>
+                <li>Seconds draw left->right “writing” lines, not a loading bar.</li>
               </ul>
             </li>
             <li><strong>Future work:</strong> Hover tooltips per note; click to start break; high-contrast mode;
               optional numeric overlay.</li>
           </ul>
         </div>
+
+            <figure>
+              <img src="images/sk4-paper.jpeg" alt="Sticky Notes — paper sketch" loading="lazy" />
+              <figcaption>Paper sketch — Sticky notes are written each minute.</figcaption>
+            </figure>
 
         <h3>Sketch evolution</h3>
         <figure>
@@ -103,13 +101,7 @@
         <div class="sketch-narrative" aria-labelledby="sk3-narrative-title">
           <h3 id="sk3-narrative-title">Sketch narrative — Sun & Horizon</h3>
 
-          <p>This sketch encodes a 25-minute session as the sun traveling from left to right across a horizon. The goal
-            is to communicate time through mood and motion rather than numbers. Seconds are shown via a soft pulsing
-            halo around the sun, making the display feel alive between minute changes. During iteration, I added a sky
-            gradient that brightens with progress, which makes the cycle read as a gentle morning. I considered a
-            vertical arc, but a subtle horizon with a consistent y-position was easier to parse quickly. This design
-            suits focused study sessions where a numeric timer would be distracting: position encodes minutes; pulse
-            encodes seconds; color encodes overall progress. It’s intentionally low-key and glanceable.</p>
+          <p>This sketch treats a 25-minute session as the sun moving left to right across a simple horizon. Instead of showing numbers, the idea is that you can just glance and understand roughly “how far” you are. The seconds are shown as a soft pulse around the sun so it doesn’t look frozen between minute jumps. While working on it, I added a sky gradient that slowly brightens as time goes on—it ended up looking like an early morning. I originally tried a vertical arc, but keeping the sun on a flat path was easier to read and didn’t pull attention away. Overall it’s just meant to be calm and low-stress: position = minutes, pulsing = seconds, and the color change gives a sense of progress without counting.</p>
 
           <ul>
             <li><strong>Context:</strong> Ambient, low-distraction study aid.</li>
@@ -117,12 +109,17 @@
               <ul>
                 <li>Sun’s x-position encodes minutes (glanceable).</li>
                 <li>Pulsing halo encodes seconds (gentle motion).</li>
-                <li>Sky color lerps from twilight→daylight as progress builds.</li>
+                <li>Sky color lerps from twilight->daylight as progress builds.</li>
               </ul>
             </li>
             <li><strong>Future work:</strong> Minute tick marks; subtle ground gradient; night/day break toggle.</li>
           </ul>
         </div>
+
+                        <figure>
+                  <img src="images/sk6-paper.jpeg" alt="Sunrise — paper sketch" loading="lazy" />
+                  <figcaption>Paper sketch — Sun moves position across minutes, pulsing each second.</figcaption>
+                </figure>
 
         <h3>Sketch evolution</h3>
         <figure>
@@ -147,21 +144,15 @@
       <div id="sketch-container-sk2" class="sketch-container"></div>
       <div id="sketch-drawing-sk4" class="sketch-evolution">
         <div class="sketch-narrative" aria-labelledby="sk4-narrative-title">
-          <h3 id="sk4-narrative-title">Sketch narrative — Apples from Branch</h3>
+          <h3 id="sk4-narrative-title">Sketch narrative :  Apples from Branch</h3>
 
-          <p>Twenty-five apples hang from a tree branch; one drops each minute and remains on the ground. This makes the
-            boundary between “future” and “complete” highly visible without numbers. I started with a clothesline of
-            dots but it felt abstract, so I switched to a branch with stems and leaves for a friendlier metaphor. The
-            active apple has a subtle sway that encodes seconds. A small visual tether for fallen apples reinforces
-            their origin and keeps the composition cohesive. Feedback pushed me to keep completed minutes on screen
-            instead of hiding them; the ground row of apples now reads like a progress shelf. The tone is playful and
-            mildly rewarding—each minute “collects” a fruit—while still staying simple enough for a study context.</p>
+          <p>This one has 25 apples hanging from a branch. Each minute, one apple falls and stays on the ground. It makes it obvious what’s done versus what’s left. I first tried a row of dots, but it looked too abstract, so I changed it to a branch with stems and leaves because it reads friendlier and more like a visual metaphor. The active apple has a small sway to show seconds passing. I also kept dropped apples on screen so progress is visible; they form a little row on the ground. The whole thing feels light and kind of playful, every minute you “earn” an apple, but still simple / non-distracting enough to use while studying.</p>
 
           <ul>
             <li><strong>Context:</strong> Study sessions where minute-by-minute “events” are motivating.</li>
             <li><strong>Design decisions:</strong>
               <ul>
-                <li>Branch + pedicels instead of a rope line.</li>
+                <li>Branch + twigs instead of a rope line.</li>
                 <li>Apples with stems/leaves; warm and readable.</li>
                 <li>Fallen apples persist on the ground (progress stays visible).</li>
                 <li>Subtle sway on the active apple encodes seconds.</li>
@@ -171,6 +162,11 @@
               patterns.</li>
           </ul>
         </div>
+
+                  <figure>
+            <img src="images/sk7-paper.jpeg" alt="Apples from Branch — paper sketch" loading="lazy" />
+            <figcaption>Paper sketch — Originally flying birds. Apples drop each minute; fallen apples persist.</figcaption>
+          </figure>
 
         <h3>Sketch evolution</h3>
         <figure>
