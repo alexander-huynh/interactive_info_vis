@@ -52,49 +52,45 @@
     <section id="tab2" class="tab-content" role="tabpanel">
       <div id="sketch-container-sk2" class="sketch-container"></div>
       <div id="sketch-drawing-sk2" class="sketch-evolution">
-        <!-- Project narrative template: replace the text below with your own narrative -->
         <div class="sketch-narrative" aria-labelledby="sk2-narrative-title">
-          <h3 id="sk2-narrative-title">Sketch narrative (replace this and add to the other two sketches!)</h3>
-          <p class="small-note">Replace this entire block with your own text when submitting.</p>
-          <p>
-            Context: This clock visualizes a 25-minute Pomodoro as a 5×5 grid of sticky notes. Each minute is one note; the active note fills smoothly with seconds so progress feels like checking off tasks instead of watching a countdown.
+          <h3 id="sk2-narrative-title">Sketch narrative — Sticky Notes Grid (Pomodoro)</h3>
+
+          <p>This clock represents a 25-minute Pomodoro as a 5×5 grid of sticky notes. Each note maps to one minute, so
+            the structure is learnable at a glance. I wanted a display that feels like progress, not pressure, so I
+            replaced a numeric countdown with a “writing” metaphor: seconds draw left-to-right lines inside the active
+            note. Feedback shaped the iteration—classmates said the white fill bar looked like a loading indicator, so I
+            switched to handwriting-style strokes. The active note was also hard to find in early versions; I added a
+            strong outline and a small “(m+1)/25” label to make the state explicit. Finished notes are brighter and
+            future notes are dimmer, which keeps motion localized and focus friendly. The result is calm, familiar, and
+            readable in a small browser panel beside study materials.</p>
+
           <ul>
-            <li><strong>Context:</strong> Designed for students studying in a browser. Lives quietly in the corner of the page and provides ambient awareness without demanding attention.</li>
-            <li><strong>Design decisions:</strong> 
-
-                <ul>
-                  <li>5×5 grid maps exactly to 25 minutes -> no legend needed.</li>
-                  <li>Status contrast: completed notes brighten, future notes dim; the active note has a thicker outline for instant
-                    focus.</li>
-                  <li>Seconds are confined to a local fill animation inside the active note to keep motion calm and readable.</li>
-                </ul>
-
-            </li>
-            <li><strong>Future work:</strong> 1–2 ideas for improvements or extensions.
-            
+            <li><strong>Context:</strong> Browser-based studying; ambient awareness without numeric pressure.</li>
+            <li><strong>Design decisions:</strong>
               <ul>
-                <li>Hover tooltip with exact minute label; click to reset or enter break mode.</li>
-                <li>Possible accessibility pass (color-contrast tuning + optional text/icon labels for color-blind users).</li>
+                <li>5×5 grid maps perfectly to 25 minutes—no legend.</li>
+                <li>Yellow Post-it palette; future (dim) vs done (brighter).</li>
+                <li>Active note gets a bold outline + small “(m+1)/25” label.</li>
+                <li>Seconds draw left→right “writing” lines, not a loading bar.</li>
               </ul>
-            
             </li>
+            <li><strong>Future work:</strong> Hover tooltips per note; click to start break; high-contrast mode;
+              optional numeric overlay.</li>
           </ul>
-          </p>
         </div>
 
         <h3>Sketch evolution</h3>
-        <p class="small-note">Replace <b>these images</b> with your own sketch evolution images.</p>
         <figure>
-          <!-- <img src="images/sk2-evolution-1.png" alt="Sketch #A - step 1" /> -->
-          <figcaption>Step 1 — Initial 5×5 grid wireframe</figcaption>
+          <!-- <img src="images/sk2-evolution-1.jpg" alt="Sticky Notes — Step 1 wireframe" /> -->
+          <figcaption>Step 1 — 5×5 wireframe; simple gray states.</figcaption>
         </figure>
         <figure>
-          <!-- <img src="images/sk2-evolution-2.png" alt="Sketch #A - step 2" /> -->
-          <figcaption>Step 2 — second layout after peer feedback</figcaption>
+          <!-- <img src="images/sk2-evolution-2.jpg" alt="Sticky Notes — Step 2 contrast + outline" /> -->
+          <figcaption>Step 2 — Active outline + stronger future/completed contrast.</figcaption>
         </figure>
         <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
+          <!-- <img src="images/sk2-evolution-3.jpg" alt="Sticky Notes — Step 3 writing-line seconds" /> -->
+          <figcaption>Step 3 — Replaced fill bar with writing-line seconds.</figcaption>
         </figure>
       </div>
     </section>
@@ -102,62 +98,44 @@
     <!-- Homework 4: Sketch 1 -->
     <section id="tab3" class="tab-content" role="tabpanel">
       <div id="sketch-container-sk3" class="sketch-container"></div>
-            <div id="sketch-container-sk2" class="sketch-container"></div>
-      <div id="sketch-drawing-sk2" class="sketch-evolution">
-        <!-- Project narrative template: replace the text below with your own narrative -->
-        <div class="sketch-narrative" aria-labelledby="sk2-narrative-title">
-          <h3 id="sk2-narrative-title">Sketch narrative: Apples from Branch</h3>
-          <p class="small-note">Replace this entire block with your own text when submitting.</p>
-          <p>
-            Context: Twenty-five apples hang from a branch; one drops each minute. The active
-      apple gently sways to show seconds and fallen apples accumulate on the ground.
-          <ul>
-            <li><strong>Context:</strong> Designed for students studying in a browser. Lives quietly in the corner of the page and provides ambient awareness without demanding attention.</li>
-            <li><strong>Design decisions:</strong> 
-              <ul>
-                <li>Branch + twigs instead of a clothesline to fit the apple metaphor.</li>
-                <li>Fallen apples render on the ground so completion is visible, not disappearing.</li>
-                <li>Subtle sway on the active apple to encode seconds.</li>
-              </ul>
+      <div id="sketch-container-sk2" class="sketch-container"></div>
+      <div id="sketch-drawing-sk3" class="sketch-evolution">
+        <div class="sketch-narrative" aria-labelledby="sk3-narrative-title">
+          <h3 id="sk3-narrative-title">Sketch narrative — Sun & Horizon</h3>
 
-            </li>
-            <li><strong>Future work:</strong> 1–2 ideas for improvements or extensions.
-            
+          <p>This sketch encodes a 25-minute session as the sun traveling from left to right across a horizon. The goal
+            is to communicate time through mood and motion rather than numbers. Seconds are shown via a soft pulsing
+            halo around the sun, making the display feel alive between minute changes. During iteration, I added a sky
+            gradient that brightens with progress, which makes the cycle read as a gentle morning. I considered a
+            vertical arc, but a subtle horizon with a consistent y-position was easier to parse quickly. This design
+            suits focused study sessions where a numeric timer would be distracting: position encodes minutes; pulse
+            encodes seconds; color encodes overall progress. It’s intentionally low-key and glanceable.</p>
+
+          <ul>
+            <li><strong>Context:</strong> Ambient, low-distraction study aid.</li>
+            <li><strong>Design decisions:</strong>
               <ul>
-                <li>Ground shadow/gradient; optional click-to-drop (demo only).</li>
-                <li>Alternate symbol/pattern for color-blind accessibility.</li>
+                <li>Sun’s x-position encodes minutes (glanceable).</li>
+                <li>Pulsing halo encodes seconds (gentle motion).</li>
+                <li>Sky color lerps from twilight→daylight as progress builds.</li>
               </ul>
-            
             </li>
+            <li><strong>Future work:</strong> Minute tick marks; subtle ground gradient; night/day break toggle.</li>
           </ul>
-          </p>
         </div>
 
         <h3>Sketch evolution</h3>
-        <p class="small-note">Replace <b>these images</b> with your own sketch evolution images.</p>
         <figure>
-          <!-- <img src="images/sk2-evolution-1.png" alt="Sketch #A - step 1" /> -->
-          <figcaption>Step 1 — Initial 5×5 grid wireframe</figcaption>
-        </figure>
-        <figure>
-          <!-- <img src="images/sk2-evolution-2.png" alt="Sketch #A - step 2" /> -->
-          <figcaption>Step 2 — second layout after peer feedback</figcaption>
+          <!-- <img src="images/sk3-evolution-1.jpg" alt="Sun & Horizon — Step 1 basic horizon" /> -->
+          <figcaption>Step 1 — Minimal horizon; constant background.</figcaption>
         </figure>
         <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
+          <!-- <img src="images/sk3-evolution-2.jpg" alt="Sun & Horizon — Step 2 pulsing halo" /> -->
+          <figcaption>Step 2 — Added pulsing halo for seconds.</figcaption>
         </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
-        </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
-        </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
+        <figure>
+          <!-- <img src="images/sk3-evolution-3.jpg" alt="Sun & Horizon — Step 3 sky gradient" /> -->
+          <figcaption>Step 3 — Sky brightens with progress.</figcaption>
         </figure>
       </div>
 
@@ -166,62 +144,46 @@
     <!-- Homework 4: Sketch 1 -->
     <section id="tab4" class="tab-content" role="tabpanel">
       <div id="sketch-container-sk4" class="sketch-container"></div>
-            <div id="sketch-container-sk2" class="sketch-container"></div>
-      <div id="sketch-drawing-sk2" class="sketch-evolution">
-        <!-- Project narrative template: replace the text below with your own narrative -->
-        <div class="sketch-narrative" aria-labelledby="sk2-narrative-title">
-          <h3 id="sk2-narrative-title">Sketch narrative: Apples from Branch</h3>
-          <p class="small-note">Replace this entire block with your own text when submitting.</p>
-          <p>
-            Context: Twenty-five apples hang from a branch; one drops each minute. The active
-      apple gently sways to show seconds and fallen apples accumulate on the ground.
-          <ul>
-            <li><strong>Context:</strong> Designed for students studying in a browser. Lives quietly in the corner of the page and provides ambient awareness without demanding attention.</li>
-            <li><strong>Design decisions:</strong> 
-              <ul>
-                <li>Branch + twigs instead of a clothesline to fit the apple metaphor.</li>
-                <li>Fallen apples render on the ground so completion is visible, not disappearing.</li>
-                <li>Subtle sway on the active apple to encode seconds.</li>
-              </ul>
+      <div id="sketch-container-sk2" class="sketch-container"></div>
+      <div id="sketch-drawing-sk4" class="sketch-evolution">
+        <div class="sketch-narrative" aria-labelledby="sk4-narrative-title">
+          <h3 id="sk4-narrative-title">Sketch narrative — Apples from Branch</h3>
 
-            </li>
-            <li><strong>Future work:</strong> 1–2 ideas for improvements or extensions.
-            
+          <p>Twenty-five apples hang from a tree branch; one drops each minute and remains on the ground. This makes the
+            boundary between “future” and “complete” highly visible without numbers. I started with a clothesline of
+            dots but it felt abstract, so I switched to a branch with stems and leaves for a friendlier metaphor. The
+            active apple has a subtle sway that encodes seconds. A small visual tether for fallen apples reinforces
+            their origin and keeps the composition cohesive. Feedback pushed me to keep completed minutes on screen
+            instead of hiding them; the ground row of apples now reads like a progress shelf. The tone is playful and
+            mildly rewarding—each minute “collects” a fruit—while still staying simple enough for a study context.</p>
+
+          <ul>
+            <li><strong>Context:</strong> Study sessions where minute-by-minute “events” are motivating.</li>
+            <li><strong>Design decisions:</strong>
               <ul>
-                <li>Ground shadow/gradient; optional click-to-drop (demo only).</li>
-                <li>Alternate symbol/pattern for color-blind accessibility.</li>
+                <li>Branch + pedicels instead of a rope line.</li>
+                <li>Apples with stems/leaves; warm and readable.</li>
+                <li>Fallen apples persist on the ground (progress stays visible).</li>
+                <li>Subtle sway on the active apple encodes seconds.</li>
               </ul>
-            
             </li>
+            <li><strong>Future work:</strong> Gentle bounce on landing; small ground shadow; color-blind friendly
+              patterns.</li>
           </ul>
-          </p>
         </div>
 
         <h3>Sketch evolution</h3>
-        <p class="small-note">Replace <b>these images</b> with your own sketch evolution images.</p>
         <figure>
-          <!-- <img src="images/sk2-evolution-1.png" alt="Sketch #A - step 1" /> -->
-          <figcaption>Step 1 — Initial 5×5 grid wireframe</figcaption>
-        </figure>
-        <figure>
-          <!-- <img src="images/sk2-evolution-2.png" alt="Sketch #A - step 2" /> -->
-          <figcaption>Step 2 — second layout after peer feedback</figcaption>
+          <!-- <img src="images/sk4-evolution-1.jpg" alt="Apples — Step 1 tokens on a line" /> -->
+          <figcaption>Step 1 — Tokens on a line; one disappears per minute.</figcaption>
         </figure>
         <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
+          <!-- <img src="images/sk4-evolution-2.jpg" alt="Apples — Step 2 apples + branch" /> -->
+          <figcaption>Step 2 — Switched to apples; added branch and pedicels.</figcaption>
         </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
-        </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
-        </figure>
-                <figure>
-          <!-- <img src="images/sk2-evolution-3.png" alt="Sketch #A - step 3" /> -->
-          <figcaption>Step 3 — refined visuals and annotations</figcaption>
+        <figure>
+          <!-- <img src="images/sk4-evolution-3.jpg" alt="Apples — Step 3 fallen apples persist" /> -->
+          <figcaption>Step 3 — Fallen apples persist; subtle tether to origin.</figcaption>
         </figure>
       </div>
     </section>
