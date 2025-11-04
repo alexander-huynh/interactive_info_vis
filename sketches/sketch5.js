@@ -1,323 +1,318 @@
 // === Paths (adjust if needed) ===
-const GEOJSON_PATH = "./../data/countries.geo.json";
 const CSV_PATH = "./../data/2019.csv";
 
 registerSketch('sk5', function (p) {
-  // --- State ---
-  let world = null;                 // GeoJSON
-  let table = null;                 // p5.Table
-  let features = [];
-  const nameToScore = new Map();
-  let minScore = 10, maxScore = 0;
+  // ---- Social-media layout (square) ----
+  const CANVAS     = 1080;
+  const LEFT_PAD   = 80;
+  const RIGHT_PAD  = 80;
+  const TOP_MARGIN = 24;
+  const BOT_PAD    = 180;
 
-  // Hover
-  let hoverCountry = null;
-  let hoverScore = null;
+  // Label column (like the corruption chart)
+  const LABEL_COL_W = 260;
+  const LABEL_GAP   = 12;
 
-  // Visual settings
-  const C_MIN = '#d8e6f3';
-  const C_MID = '#5ca0d6';
-  const C_MAX = '#004e89';
-  const BG = "#f7f9fb";
-  const PAD = 40;       // inner padding for map
-  const TOP_PAD = 90;   // space for title/subtitle
+  // Row layout
+  const ROW_H       = 52;
+  const DOT_R_MAIN  = 9;
+  const DOT_R_DIM   = 6;
 
-  // CSV header candidates
-// add "Country or region" to the list
-const COUNTRY_CANDIDATES = [
-  "country","Country","Country name","Country or region","Entity","Location"
-];
+  // Colors
+  const COL_BG        = "#f7f9fb";
+  const COL_AXIS      = p => p.color(205);
+  const COL_GRID      = p => p.color(230);
+  const COL_LABEL     = p => p.color(25);
+  const COL_LABEL_DIM = p => p.color(80);
+  const COL_MUTED     = p => p.color(160,160,160,160);
+  const COL_MUTED_DOT = p => p.color(150,150,150);
+  const COL_GDP       = p => p.color(120,120,120);
+  const COL_SCORE     = p => p.color("#1f77b4");
 
-  const SCORE_CANDIDATES   = ["score","Score","Happiness score","Ladder score","Life Ladder"];
+  // Column detection
+  const COUNTRY_CANDS = ["Country or region","Country","country","Entity","Location"];
+  const SCORE_CANDS   = ["Score","Happiness score","Ladder score","Life Ladder","score"];
+  const GDP_CANDS     = ["GDP per capita","Log GDP per capita","GDP","gdp"];
 
-  // Name fixes
-  const NAME_FIX = {
-    "United States": "United States of America",
-    "USA": "United States of America",
-    "U.S.": "United States of America",
-    "UK": "United Kingdom",
-    "Russia": "Russian Federation",
-    "South Korea": "Republic of Korea",
-    "North Korea": "Democratic People's Republic of Korea",
-    "Czechia": "Czech Republic",
-    "Ivory Coast": "Côte d'Ivoire",
-    "Congo (Brazzaville)": "Republic of the Congo",
-    "Congo (Kinshasa)": "Democratic Republic of the Congo",
-    "Syria": "Syrian Arab Republic",
-    "Vietnam": "Viet Nam",
-    "Laos": "Lao People's Democratic Republic",
-    "Eswatini": "Swaziland",
-    "Cape Verde": "Cabo Verde",
-    "Micronesia": "Federated States of Micronesia",
-    "Bolivia": "Bolivia (Plurinational State of)",
-    "Venezuela": "Venezuela (Bolivarian Republic of)",
-    "Tanzania": "United Republic of Tanzania",
-    "Moldova": "Republic of Moldova",
-    "Palestine": "Palestine, State of"
-  };
+  // ---- Data state ----
+  let table = null;
+  // rows will be TOP-15 with global-normalized values:
+  // {country, score, gdp, nScoreGlobal, nGdpGlobal}
+  let rows  = [];
+  let x0, x1, w;
+  let axisY = 0;
+  let rowsStartY = 0;
+  let plottedN = 0;
+  let hovered = null;
 
-  // Narrative callouts (lon,lat)
-  const CALLOUTS = [
-    { name: "Finland",       lon: 25.0,  lat: 64.0 },
-    { name: "Afghanistan",   lon: 67.7,  lat: 33.9 },
-    { name: "United States", lon: -98.6, lat: 39.8 },
-    { name: "South Africa",  lon: 24.0,  lat: -29.0 }
-  ];
+  // windowed (zoom) scale bounds in GLOBAL-normalized units [0..100]
+  let winLo = 0;
+  let winHi = 100;
+  const GAMMA = 0.85; // <1 spreads high-end slightly; =1 disables
 
   p.preload = function () {
-    world = p.loadJSON(GEOJSON_PATH);
     table = p.loadTable(CSV_PATH, "csv", "header");
   };
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(CANVAS, CANVAS);
     p.pixelDensity(2);
+    p.textFont("system-ui, -apple-system, Segoe UI, Roboto, sans-serif");
 
-    // Build score lookup
-    const { countryCol, scoreCol } = detectColumns(table);
+    // Plot area X bounds (after fixed label column)
+    x0 = LEFT_PAD + LABEL_COL_W + LABEL_GAP;
+    x1 = p.width - RIGHT_PAD;
+    w  = x1 - x0;
+
+    // ---------- Build data with GLOBAL normalization ----------
+    const { cCol, sCol, gCol } = detectColumns(table);
+
+    const allRows = [];
     for (let r = 0; r < table.getRowCount(); r++) {
-      const raw = table.getString(r, countryCol);
-      const val = parseFloat(table.getString(r, scoreCol));
-      if (!raw || isNaN(val)) continue;
-      const fixed = normalizeName(raw.trim());
-      nameToScore.set(fixed, val);
-      if (val < minScore) minScore = val;
-      if (val > maxScore) maxScore = val;
-    }
-    if (!isFinite(minScore) || !isFinite(maxScore)) { minScore = 0; maxScore = 10; }
-
-    // Flatten features
-    if (world && world.type === "FeatureCollection") {
-      features = world.features || [];
-    } else if (world && world.features) {
-      features = world.features;
+      const country = table.getString(r, cCol);
+      const score   = parseFloat(table.getString(r, sCol));
+      const gdp     = parseFloat(table.getString(r, gCol));
+      if (!country || !isFinite(score) || !isFinite(gdp)) continue;
+      allRows.push({ country, score, gdp });
     }
 
-    p.noLoop(); // draw once; hover will trigger redraws
+    // Global min/max from the FULL dataset (keeps context honest)
+    const sMinG = Math.min(...allRows.map(d => d.score));
+    const sMaxG = Math.max(...allRows.map(d => d.score));
+    const gMinG = Math.min(...allRows.map(d => d.gdp));
+    const gMaxG = Math.max(...allRows.map(d => d.gdp));
+
+    for (const d of allRows) {
+      d.nScoreGlobal = safe01(d.score, sMinG, sMaxG) * 100;
+      d.nGdpGlobal   = safe01(d.gdp,   gMinG, gMaxG) * 100;
+    }
+
+    // Top 15 by raw happiness score
+    allRows.sort((a, b) => b.score - a.score);
+    rows = allRows.slice(0, 15);
+
+    // Define a zoom window from the TOP-15 (but STILL in global-normalized units)
+    const topMin = Math.min(...rows.map(d => Math.min(d.nScoreGlobal, d.nGdpGlobal)));
+    const topMax = Math.max(...rows.map(d => Math.max(d.nScoreGlobal, d.nGdpGlobal)));
+    const span   = Math.max(1e-6, topMax - topMin);
+    const padPct = 0.08;
+    winLo = Math.max(0, topMin - span * padPct);
+    winHi = Math.min(100, topMax + span * padPct);
+
+    p.noLoop();
   };
 
+  p.mouseMoved = function () { p.redraw(); };
+
   p.draw = function () {
-    p.background(BG);
-
-    // Title + subtitle (in-canvas so exports look right)
-    drawTitles();
-
-    // Map area transform (reserve TOP_PAD)
-    p.push();
-    p.translate(0, TOP_PAD);
-
-    hoverCountry = null;
-    hoverScore = null;
-
-    p.stroke(255);
-    p.strokeWeight(0.5);
-
-    for (const f of features) {
-      const geom = f.geometry;
-      if (!geom) continue;
-
-      const prop = f.properties || {};
-      const rawName = prop.ADMIN || prop.name || prop.NAME || prop.Country || "";
-      const name = normalizeName(String(rawName));
-      const score = nameToScore.get(name);
-      const fillCol = (score != null) ? scaleColor(score, minScore, maxScore) : p.color(230,233,236);
-
-      p.fill(fillCol);
-
-      if (geom.type === "Polygon") {
-        drawPolygon(geom.coordinates);
-        if (pointInMultiPolygon(geom.coordinates, p.mouseX, p.mouseY, TOP_PAD)) {
-          hoverCountry = name;
-          hoverScore = score;
-        }
-      } else if (geom.type === "MultiPolygon") {
-        drawMultiPolygon(geom.coordinates);
-        if (pointInMultiPolygon(geom.coordinates.flat(), p.mouseX, p.mouseY, TOP_PAD)) {
-          hoverCountry = name;
-          hoverScore = score;
-        }
-      }
-    }
-
-    // Legend + callouts
+    p.background(COL_BG);
+    drawTitleAndLayout();
+    drawAxis();
+    drawRows();
     drawLegend();
-    drawCallouts();
-
-    p.pop();
-
-    // Tooltip last, on top
     drawTooltip();
   };
 
-  // --- Events ---
-  p.mouseMoved = function () { p.redraw(); };
-  p.windowResized = function () {
-    p.resizeCanvas(p.windowWidth, p.windowHeight);
-    p.redraw();
-  };
-
-  // --- Helpers ---
+  // ---------- helpers ----------
   function detectColumns(tbl) {
-    const headers = tbl.columns;
-    const find = (cands) => {
-      for (const c of cands) {
-        const idx = headers.indexOf(c);
-        if (idx !== -1) return c;
+    const H = tbl.columns;
+    const pick = (cands, fb) => cands.find(c => H.includes(c)) || H[fb];
+    return { cCol: pick(COUNTRY_CANDS,0), sCol: pick(SCORE_CANDS,1), gCol: pick(GDP_CANDS,2) };
+  }
+
+  function safe01(v, vmin, vmax) {
+    if (!isFinite(v)) return 0;
+    if (vmax === vmin) return 0.5;
+    return Math.max(0, Math.min(1, (v - vmin) / (vmax - vmin)));
+  }
+
+  // GLOBAL mapper: 0..100 (absolute, global normalization) to pixels
+  function xFromNorm(global01to100) {
+    const t = Math.max(0, Math.min(1, global01to100 / 100));
+    return x0 + t * w;
+  }
+
+  // WINDOW (zoomed) mapper over [winLo..winHi] (both in global units 0..100)
+  function xFromWindow(global01to100) {
+    let u = (global01to100 - winLo) / Math.max(1e-6, (winHi - winLo));
+    u = Math.max(0, Math.min(1, u));
+    if (GAMMA !== 1) u = Math.pow(u, GAMMA); // mild spacing tweak
+    return x0 + u * w;
+  }
+
+  function drawTitleAndLayout() {
+    p.fill(COL_LABEL(p));
+    p.textAlign(p.LEFT, p.TOP);
+    p.textWrap(p.WORD);
+
+    const TITLE_SIZE = 48;
+    const SUB_SIZE   = 22;
+    const titleX = LEFT_PAD;
+    const titleY = TOP_MARGIN;
+    const textW  = p.width - LEFT_PAD - RIGHT_PAD;
+
+    p.textSize(TITLE_SIZE);
+    p.textLeading(TITLE_SIZE * 1.1);
+    p.text("Economic prosperity isn’t a perfect predictor of life satisfaction", titleX, titleY, textW);
+    const titleH = TITLE_SIZE * 1.1 * 2;
+
+    p.fill(70);
+    p.textSize(SUB_SIZE);
+    p.textLeading(SUB_SIZE * 1.35);
+    const subY = titleY + titleH + 8;
+    p.text(
+      "Top happiest countries (2019). Each line compares a country's GDP per capita with its reported life satisfaction.",
+      titleX, subY, textW
+    );
+    const subH = SUB_SIZE * 1.35 * 1.4;
+
+    rowsStartY = subY + subH + 28;
+    axisY      = p.height - BOT_PAD + 10;
+    const usableH = axisY - 28 - rowsStartY;
+
+    plottedN = Math.max(0, Math.floor(usableH / ROW_H));
+    if (plottedN > rows.length) plottedN = rows.length;
+  }
+
+  function drawAxis() {
+    const y = axisY;
+    const gridTop = rowsStartY - ROW_H * 0.4;
+    const gridBot = y - 28;
+
+    // Faint GLOBAL reference grid at 0/25/50/75/100 (context)
+    p.stroke(COL_GRID(p));
+    p.strokeWeight(1);
+    for (const t of [0, 25, 50, 75, 100]) {
+      const xx = xFromNorm(t);
+      p.line(xx, gridTop, xx, gridBot);
+    }
+
+    // Main axis baseline
+    p.stroke(COL_AXIS(p));
+    p.strokeWeight(2);
+    p.line(x0, y, x1, y);
+
+    // Main ticks along the WINDOW scale, labeled in GLOBAL units
+    p.textAlign(p.CENTER, p.TOP);
+    p.textSize(18);
+    p.fill(90);
+
+    const MAIN_TICKS = 5; // creates 6 ticks (0..5)
+    for (let i = 0; i <= MAIN_TICKS; i++) {
+      const gv = lerp(winLo, winHi, i / MAIN_TICKS);  // global value in [0..100]
+      const xx = xFromWindow(gv);
+      p.stroke(COL_AXIS(p));
+      p.line(xx, y, xx, y + 8);
+      p.noStroke();
+      p.text(Math.round(gv), xx, y + 12);
+    }
+
+    p.fill(70);
+    p.textSize(18);
+    p.text("Global normalized position (zoomed view)", (x0 + x1) / 2, y + 36);
+  }
+
+  function drawRows() {
+    hovered = null;
+    const view = rows.slice(0, plottedN);
+    const xLabel = LEFT_PAD + LABEL_COL_W - LABEL_GAP;
+
+    for (let i = 0; i < view.length; i++) {
+      const d = view[i];
+      const y = rowsStartY + i * ROW_H;
+
+      // Country label
+      p.textAlign(p.RIGHT, p.CENTER);
+      p.textSize(20);
+      p.fill(COL_LABEL(p));
+      p.text(d.country, xLabel, y);
+
+      // Dumbbell using WINDOW mapping but GLOBAL-normalized values
+      const xG = xFromWindow(d.nGdpGlobal);
+      const xS = xFromWindow(d.nScoreGlobal);
+
+      p.stroke(COL_MUTED(p));
+      p.strokeWeight(3);
+      p.strokeCap(p.ROUND);
+      p.line(xG, y, xS, y);
+
+      p.noStroke();
+      p.fill(COL_GDP(p));
+      p.circle(xG, y, DOT_R_DIM * 2);
+
+      p.fill(COL_SCORE(p));
+      p.circle(xS, y, DOT_R_DIM * 2);
+
+      // Delta (in GLOBAL-normalized points)
+      const delta = Math.round(d.nScoreGlobal - d.nGdpGlobal);
+      if (Math.abs(delta) >= 3) {
+        p.textAlign(p.LEFT, p.CENTER);
+        p.textSize(14);
+        p.fill(90);
+        p.text((delta >= 0 ? "+" : "") + delta, xS + 8, y);
       }
-      return cands === COUNTRY_CANDIDATES ? headers[0] : headers[1];
-    };
-    return { countryCol: find(COUNTRY_CANDIDATES), scoreCol: find(SCORE_CANDIDATES) };
-  }
 
-  function normalizeName(n) {
-    if (!n) return "";
-    const t = n.trim();
-    return NAME_FIX[t] || t;
-  }
-
-  // Equirectangular projection to canvas
-  function project(lon, lat) {
-    const x = p.map(lon, -180, 180, PAD, p.width - PAD);
-    const y = p.map(lat, 90, -90, PAD, p.height - PAD); // invert Y for north-up
-    return [x, y];
-  }
-
-  function drawPolygon(rings) {
-    for (const ring of rings) {
-      p.beginShape();
-      for (const coord of ring) {
-        const [lon, lat] = coord;
-        const [x, y] = project(lon, lat);
-        p.vertex(x, y);
+      // Hover hitbox
+      const r = DOT_R_DIM + 4;
+      if (p.dist(p.mouseX, p.mouseY, xG, y) <= r || p.dist(p.mouseX, p.mouseY, xS, y) <= r) {
+        hovered = { y, xG, xS, row: d };
       }
-      p.endShape(p.CLOSE);
-    }
-  }
-
-  function drawMultiPolygon(polys) {
-    for (const poly of polys) drawPolygon(poly);
-  }
-
-  // Point-in-polygon (ray cast)
-  function pointInRing(ring, px, py) {
-    let inside = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [lonI, latI] = ring[i];
-      const [lonJ, latJ] = ring[j];
-      const [xi, yi] = project(lonI, latI);
-      const [xj, yj] = project(lonJ, latJ);
-      const intersect = ((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / ((yj - yi) + 1e-12) + xi);
-      if (intersect) inside = !inside;
-    }
-    return inside;
-  }
-
-  function pointInMultiPolygon(rings, px, py, topPad) {
-    const yAdj = py - topPad; // account for translate
-    for (const ring of rings) {
-      if (pointInRing(ring, px, yAdj)) return true;
-    }
-    return false;
-  }
-
-  // 3-stop ramp
-  function scaleColor(value, vmin, vmax) {
-    const t = p.constrain((value - vmin) / (vmax - vmin + 1e-9), 0, 1);
-    if (t < 0.5) {
-      const u = p.map(t, 0, 0.5, 0, 1);
-      return p.lerpColor(p.color(C_MIN), p.color(C_MID), u);
-    } else {
-      const u = p.map(t, 0.5, 1, 0, 1);
-      return p.lerpColor(p.color(C_MID), p.color(C_MAX), u);
     }
   }
 
   function drawLegend() {
-    const w = Math.min(360, p.width - PAD * 2);
-    const x = PAD;
-    const y = p.height - PAD - 28;
-    const h = 14;
-
-    for (let i = 0; i < w; i++) {
-      const t = i / (w - 1);
-      const val = p.lerp(minScore, maxScore, t);
-      const col = scaleColor(val, minScore, maxScore);
-      p.stroke(col);
-      p.line(x + i, y, x + i, y + h);
-    }
+    const y = p.height - BOT_PAD + 86;
+    const x = LEFT_PAD;
 
     p.noStroke();
-    p.fill(50);
-    p.textSize(12);
-    p.textAlign(p.LEFT, p.BOTTOM);
-    p.text("Happiness Score (0–10)", x, y - 6);
-
-    p.fill(60);
-    p.textAlign(p.CENTER, p.TOP);
-    const mid = (minScore + maxScore) / 2;
-    p.text(p.nfc(minScore, 1), x, y + h + 2);
-    p.text(p.nfc(mid, 1), x + w / 2, y + h + 2);
-    p.text(p.nfc(maxScore, 1), x + w, y + h + 2);
-  }
-
-  function drawCallouts() {
-    p.textSize(13);
     p.textAlign(p.LEFT, p.CENTER);
-    for (const c of CALLOUTS) {
-      const [x, y] = project(c.lon, c.lat);
-      const nm = normalizeName(c.name);
-      const sc = nameToScore.get(nm);
-      p.noStroke();
-      p.fill(0, 120);
-      p.circle(x, y, 4);
-      p.fill(30);
-      p.text(`${c.name}: ${sc != null ? p.nf(sc, 1, 2) : "n/a"}`, x + 6, y);
-    }
-  }
+    p.textSize(20);
+    p.fill(30);
+    p.text("Legend", x, y);
 
-  function drawTitles() {
-    p.noStroke();
-    p.fill(20);
-    p.textAlign(p.LEFT, p.TOP);
+    p.fill(COL_GDP(p));
+    p.circle(x + 100, y, 14);
+    p.fill(40);
+    p.textSize(18);
+    p.text("GDP per capita (global-normalized, zoomed axis)", x + 120, y);
 
-    p.textSize(26);
-    p.text("Happiness Around the World", PAD, 16);
-
-    p.fill(70);
-    p.textSize(14);
-    p.text(
-      "Average self-reported life evaluation. Lighter = lower, deeper blue = higher. Countries with no data shown in light gray.",
-      PAD, 48
-    );
+    p.fill(COL_SCORE(p));
+    p.circle(x + 560, y, 14);
+    p.fill(40);
+    p.text("Happiness score (global-normalized, zoomed axis)", x + 580, y);
   }
 
   function drawTooltip() {
-    if (!hoverCountry) return;
+    if (!hovered) return;
+    const d = hovered.row;
+
+    const delta = d.nScoreGlobal - d.nGdpGlobal;
     const lines = [
-      hoverCountry,
-      (hoverScore != null ? `Score: ${p.nf(hoverScore, 1, 2)}` : "No data")
+      d.country,
+      `Happiness: ${p.nf(d.score, 1, 2)}`,
+      `GDP per capita: ${p.nf(d.gdp, 1, 3)}`,
+      `Δ (norm, global): ${(delta >= 0 ? "+" : "") + p.nf(delta, 1, 1)}`
     ];
 
-    p.textSize(14);
-    let w = 0;
-    for (const t of lines) w = Math.max(w, p.textWidth(t));
-    const pad = 8;
-    const h = lines.length * 18 + pad * 2;
+    p.textSize(20);
+    let wMax = 0;
+    for (const t of lines) wMax = Math.max(wMax, p.textWidth(t));
+    const pad = 10;
+    const h = lines.length * 24 + pad * 2;
 
-    let x = p.mouseX + 12;
-    let y = p.mouseY + 12;
-    if (x + w + pad * 2 > p.width - 6) x = p.width - w - pad * 2 - 6;
-    if (y + h > p.height - 6) y = p.height - h - 6;
+    let x = p.mouseX + 16;
+    let y = p.mouseY + 16;
+    if (x + wMax + pad * 2 > p.width - 8) x = p.width - wMax - pad * 2 - 8;
+    if (y + h > axisY - 8) y = axisY - h - 12;
 
     p.noStroke();
     p.fill(255, 245);
-    p.rect(x, y, w + pad * 2, h, 8);
+    p.rect(x, y, wMax + pad * 2, h, 10);
     p.fill(20);
-
-    let ty = y + pad + 2;
-    for (const t of lines) {
-      p.text(t, x + pad, ty);
-      ty += 18;
-    }
+    let yy = y + pad + 4;
+    for (const t of lines) { p.text(t, x + pad, yy); yy += 24; }
   }
+
+  // small linear interpolation helper
+  function lerp(a, b, t) { return a + (b - a) * t; }
 });
