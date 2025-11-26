@@ -1,7 +1,8 @@
 // === Paths (adjust if needed) ===
-const CSV_PATH = "./../data/2019.csv";
+
 
 registerSketch('sk5', function (p) {
+  const CSV_PATH = "data/2019.csv";
   // ---- Social-media layout (square) ----
   const CANVAS     = 1080;
   const LEFT_PAD   = 80;
